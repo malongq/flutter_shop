@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'home_page.dart';
+import 'cart_page.dart';
+import 'category_page.dart';
+import 'member_page.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -8,7 +12,7 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
 
-  final List<BottomNavigationBarItem> b = [
+  final List<BottomNavigationBarItem> bootom_tabs = [
     BottomNavigationBarItem(
       icon: Icon(CupertinoIcons.home),
       title: Text('首页')
@@ -27,17 +31,69 @@ class _IndexPageState extends State<IndexPage> {
     ),
   ];
 
+  int currentIndex = 0;
+  var currentPage;
+  final List tabPage = [
+    HomePage(),
+    CategoryPage(),
+    CartPage(),
+    MemberPage()
+  ];
+
+  @override
+  void initState() {
+    currentPage = tabPage[currentIndex];
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('马龙'),),
+      backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
       body: Center(
-        child: Text('哈哈'),
+        child: currentPage,
       ),
-      bottomNavigationBar: BottomNavigationBar(items: b,backgroundColor: Colors.pink,),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white70,
+        items: bootom_tabs,
+        currentIndex: currentIndex,
+        onTap: (index){
+          setState(() {
+            currentIndex = index;
+            currentPage = tabPage[currentIndex];
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+      ),
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //TODO 只是测试一下
 //class IndexPage extends StatelessWidget {
