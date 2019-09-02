@@ -12,7 +12,7 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
 
-  final List<BottomNavigationBarItem> bootom_tabs = [
+  final List<BottomNavigationBarItem> booTomTabs = [
     BottomNavigationBarItem(
       icon: Icon(CupertinoIcons.home),
       title: Text('首页')
@@ -55,7 +55,7 @@ class _IndexPageState extends State<IndexPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white70,
-        items: bootom_tabs,
+        items: booTomTabs,
         currentIndex: currentIndex,
         onTap: (index){
           setState(() {
