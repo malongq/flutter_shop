@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import '../config/http_header.dart';
+import 'package:flutter_shop/service/service_request_manger.dart';
 
+//TODO 首页
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -9,52 +9,95 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  var showText = '还没开始请求';
+  String showText = '请求成功后，一会我就要变身了...';
+
+  @override
+  void initState() {
+    getHomePageData().then((val){
+      setState(() {
+        showText = val.toString();
+        print("马龙--------------------"+showText);
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    return Container(
-      child: Scaffold(
-        appBar: AppBar(title: Text('伪造请求头'),),
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              RaisedButton(
-                onPressed: _requestJiKe,
-                child: Text('开始请求'),
-              ),
-              Text(showText)
-            ],
-          ),
-        ),
+    return Scaffold(
+      appBar: AppBar(title: Text('首页'),),
+      body: SingleChildScrollView(
+        child: Text(showText),
       ),
     );
   }
 
-  void _requestJiKe(){
-    print('准备请求');
-    getHttp().then((val){
-      setState(() {
-        showText = val['data'].toString();
-      });
-    });
-  }
-
-  Future getHttp() async{
-    try{
-      Response response;
-      Dio dio = new Dio();
-      dio.options.headers = http_header;
-      response = await dio.post('https://time.geekbang.org/serv/v1/column/topList');
-      print(response.data);
-      return response.data;
-    }catch(e){
-      print(e);
-    }
-  }
-
 }
+
+
+
+
+
+
+
+
+
+
+//import 'package:dio/dio.dart';
+//import '../config/http_header.dart';
+//class HomePage extends StatefulWidget {
+//  @override
+//  _HomePageState createState() => _HomePageState();
+//}
+//
+//class _HomePageState extends State<HomePage> {
+//
+//  var showText = '还没开始请求';
+//
+//  @override
+//  Widget build(BuildContext context) {
+//
+//    return Container(
+//      child: Scaffold(
+//        appBar: AppBar(title: Text('伪造请求头'),),
+//        body: SingleChildScrollView(
+//          child: Column(
+//            children: <Widget>[
+//              RaisedButton(
+//                onPressed: _requestJiKe,
+//                child: Text('开始请求'),
+//              ),
+//              Text(showText)
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
+//  }
+//
+//  void _requestJiKe(){
+//    print('准备请求');
+//    getHttp().then((val){
+//      setState(() {
+//        showText = val['data'].toString();
+//      });
+//    });
+//  }
+//
+//  Future getHttp() async{
+//    try{
+//      Response response;
+//      Dio dio = new Dio();
+//      dio.options.headers = http_header;
+//      response = await dio.post('https://time.geekbang.org/serv/v1/column/topList');
+//      print(response.data);
+//      return response.data;
+//    }catch(e){
+//      print(e);
+//    }
+//  }
+//
+//}
 
 
 
