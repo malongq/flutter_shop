@@ -14,12 +14,13 @@ Future getHomePageData() async{
     var param = {'lon':'115.02932','lat':'35.76189'};
     response = await dio.post(servicePath['homePageUrl'],data: param);
     if(response.statusCode == 200){
+      print('请求数据成功: 马龙=========>'+response.data);
       return response.data;
     }else{
       throw Exception('请求服务端出错！！！');
     }
   }catch(e){
-    return print('ERROR:=========>${e}');
+    return print('ERROR: 马龙=========>${e}');
   }
 
 }

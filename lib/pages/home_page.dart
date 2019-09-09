@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop/service/service_request_manger.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'dart:convert';
 
 //TODO 首页
 class HomePage extends StatefulWidget {
@@ -8,31 +10,109 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  String showText = '请求成功后，一会我就要变身了...';
-
-  @override
-  void initState() {
-    getHomePageData().then((val){
-      setState(() {
-        showText = val.toString();
-        print("马龙--------------------"+showText);
-      });
-    });
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('首页'),),
-      body: SingleChildScrollView(
-        child: Text(showText),
+      body:FutureBuilder(
+        future: getHomePageData(),
+        builder: (context,snapshot){
+          if(snapshot.hasData){
+            print('进来了----------------------');
+            var data = json.decode(snapshot.data.toString());
+            List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 顶部轮播组件数
+            return Column(
+              children: <Widget>[
+                Banner(swiperDataList:swiperDataList ),   //页面顶部轮播组件
+              ],
+            );
+          }else{
+            print('么有进来了----------------------');
+            return Center(
+              child: Text('加载中 . . .'),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+//首页轮播图
+class Banner extends StatelessWidget {
+
+  final List swiperDataList;
+  Banner({Key key,this.swiperDataList}):super(key:key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    var width = MediaQuery.of(context).size.width;
+    var height = width/4*2;
+
+    return Container(
+      width: width,
+      height: height,
+      child: Swiper(
+        itemCount: swiperDataList.length,
+        itemBuilder: (BuildContext context,int index){
+          return Image.network("${swiperDataList[index]['image']}",fit:BoxFit.fill);
+        },
+        autoplay: true,
+        pagination: SwiperPagination(),
       ),
     );
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//class HomePage extends StatefulWidget {
+//  @override
+//  _HomePageState createState() => _HomePageState();
+//}
+//
+//class _HomePageState extends State<HomePage> {
+//
+//  String showText = '请求成功后，一会我就要变身了...';
+//
+//  @override
+//  void initState() {
+//    getHomePageData().then((val){
+//      setState(() {
+//        showText = val.toString();
+//        print("马龙--------------------"+showText);
+//      });
+//    });
+//    super.initState();
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return Scaffold(
+//      appBar: AppBar(title: Text('首页'),),
+//      body: SingleChildScrollView(
+//        child: Text(showText),
+//      ),
+//    );
+//  }
+//
+//}
 
 
 
