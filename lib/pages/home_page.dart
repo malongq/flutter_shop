@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shop/service/service_request_manger.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:convert';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 //TODO 首页
 class HomePage extends StatefulWidget {
@@ -47,12 +48,17 @@ class Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var width = MediaQuery.of(context).size.width;
-    var height = width/4*2;
+    ScreenUtil.instance = ScreenUtil(width: 750,height: 1334)..init(context);
+    print('设备像素密度： ${ScreenUtil.pixelRatio}');
+    print('设备宽： ${ScreenUtil.screenWidth}');
+    print('设备高： ${ScreenUtil.screenHeight}');
+
+//    var width = MediaQuery.of(context).size.width;
+//    var height = width/4*2;
 
     return Container(
-      width: width,
-      height: height,
+      width: ScreenUtil().setWidth(750),
+      height: ScreenUtil().setHeight(333),
       child: Swiper(
         itemCount: swiperDataList.length,
         itemBuilder: (BuildContext context,int index){
