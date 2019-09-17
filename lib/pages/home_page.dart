@@ -19,16 +19,19 @@ class _HomePageState extends State<HomePage> {
         future: getHomePageData(),
         builder: (context,snapshot){
           if(snapshot.hasData){
-            print('进来了----------------------');
+            print('数据请求进来了----------------------');
             var data = json.decode(snapshot.data.toString());
-            List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 顶部轮播组件数
+            List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 获取顶部轮播组件数据
+            List<Map> navigatorList = (data['data']['category'] as List).cast(); // 获取顶部导航组件数据
+
             return Column(
               children: <Widget>[
                 Banner(swiperDataList:swiperDataList ),   //页面顶部轮播组件
+                Navigator(navigatorList: navigatorList)   //页面顶部导航组件
               ],
             );
           }else{
-            print('么有进来了----------------------');
+            print('暂时还没有进来----------------------');
             return Center(
               child: Text('加载中 . . .'),
             );
@@ -39,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-//首页轮播图
+//首页轮播图数据
 class Banner extends StatelessWidget {
 
   final List swiperDataList;
@@ -48,7 +51,6 @@ class Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    ScreenUtil.instance = ScreenUtil(width: 750,height: 1334)..init(context);
     print('设备像素密度： ${ScreenUtil.pixelRatio}');
     print('设备宽： ${ScreenUtil.screenWidth}');
     print('设备高： ${ScreenUtil.screenHeight}');
@@ -73,6 +75,56 @@ class Banner extends StatelessWidget {
 }
 
 
+//首页导航区数据
+class Navigator extends StatelessWidget {
+
+  final List navigatorList;
+
+  Navigator({Key key, item, this.navigatorList}):super(key:key);
+
+  Widget _navigatorListUi(BuildContext context,item){
+    return InkWell(
+      onTap: (){
+        print('点击进入');
+//        _goCategoryDetail(context,index,item['mallCategoryId']);
+      },
+      child: Column(
+        children: <Widget>[
+          Image.network(item['image'],width:ScreenUtil().setWidth(95)),
+          Text(item['mallCategoryName'])
+        ],
+      )
+    );
+  }
+
+//  void _goCategoryDetail(context,int index,String categroyId) async{
+//    await request('getCategory').then((val){
+//      var data = json.decode(val.toString());
+//    });
+//  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    if(navigatorList.length>10){
+      navigatorList.removeRange(10, navigatorList.length);
+    }
+
+    return Container(
+      color: Colors.white,
+      margin: EdgeInsets.only(top:5.0),
+      height: ScreenUtil().setHeight(320),
+      padding: EdgeInsets.all(3.0),
+      child: GridView.count(
+        crossAxisCount: 5,
+        padding: EdgeInsets.all(5.0),
+        children: navigatorList.map((item){
+          return _navigatorListUi(context,item);
+        }).toList(),//一定要记得最后 toList() 要不然报错：type 'MappedListIterable<Map<dynamic,dynamic>,Widget>'is not a subtype of type 'List<Widget>'
+      ),
+    );
+  }
+}
 
 
 
