@@ -23,11 +23,13 @@ class _HomePageState extends State<HomePage> {
             var data = json.decode(snapshot.data.toString());
             List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 获取顶部轮播组件数据
             List<Map> navigatorList = (data['data']['category'] as List).cast(); // 获取顶部导航组件数据
+            String adbPicture = data['data']['advertesPicture']['PICTURE_ADDRESS'];//获取广告位数据
 
             return Column(
               children: <Widget>[
-                Banner(swiperDataList:swiperDataList ),   //页面顶部轮播组件
-                Navigator(navigatorList: navigatorList)   //页面顶部导航组件
+                Banner(swiperDataList:swiperDataList ),    //页面顶部轮播组件
+                Navigator(navigatorList: navigatorList),   //页面顶部导航组件
+                Adv(adv: adbPicture)                       //广告位组件
               ],
             );
           }else{
@@ -127,6 +129,18 @@ class Navigator extends StatelessWidget {
 }
 
 
+//首页广告位数据
+class Adv extends StatelessWidget {
+  final String adv;
+  Adv({Key key,this.adv}):super(key:key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Image.network(adv),
+    );
+  }
+}
 
 
 
