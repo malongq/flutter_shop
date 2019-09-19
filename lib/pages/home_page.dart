@@ -3,6 +3,7 @@ import 'package:flutter_shop/service/service_request_manger.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //TODO 首页
 class HomePage extends StatefulWidget {
@@ -10,7 +11,20 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
+
+  //保持页面状态（1） 必须是 StatefulWidget，然后 加入混入 with AutomaticKeepAliveClientMixin
+  //          （2）  重写  wantKeepAlive 返回true
+  //          （3）  在使用该页面的文件 改造成返回 list  这里去indexPage 改造
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    print('重新加载页面');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,16 +35,23 @@ class _HomePageState extends State<HomePage> {
           if(snapshot.hasData){
             print('数据请求进来了----------------------');
             var data = json.decode(snapshot.data.toString());
-            List<Map> swiperDataList = (data['data']['slides'] as List).cast(); // 获取顶部轮播组件数据
-            List<Map> navigatorList = (data['data']['category'] as List).cast(); // 获取顶部导航组件数据
-            String adbPicture = data['data']['advertesPicture']['PICTURE_ADDRESS'];//获取广告位数据
+            List<Map> swiperDataList = (data['data']['slides'] as List).cast();    // 获取顶部轮播组件数据
+            List<Map> navigatorList = (data['data']['category'] as List).cast();   // 获取顶部导航组件数据
+            String adbPicture = data['data']['advertesPicture']['PICTURE_ADDRESS'];// 获取广告位数据
+            String leaderImage = data['data']['shopInfo']['leaderImage'];          // 获取店长图片数据
+            String leaderPhone = data['data']['shopInfo']['leaderPhone'];          // 获取店长电话数据
+            List<Map> recommendList = (data['data']['recommend'] as List).cast();  // 获取商品推荐数据
 
-            return Column(
-              children: <Widget>[
-                Banner(swiperDataList:swiperDataList ),    //页面顶部轮播组件
-                Navigator(navigatorList: navigatorList),   //页面顶部导航组件
-                Adv(adv: adbPicture)                       //广告位组件
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Banner(swiperDataList:swiperDataList ),    //页面顶部轮播组件
+                  Navigator(navigatorList: navigatorList),   //页面顶部导航组件
+                  Adv(adv: adbPicture),                      //广告位组件
+                  LeaderPhone(leaderImage:leaderImage,leaderPhone:leaderPhone),//店长电话组件
+                  Recommend(recommendList:recommendList),    //商品推荐组件
+                ],
+              ),
             );
           }else{
             print('暂时还没有进来----------------------');
@@ -42,6 +63,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 }
 
 //首页轮播图数据
@@ -115,7 +137,7 @@ class Navigator extends StatelessWidget {
     return Container(
       color: Colors.white,
       margin: EdgeInsets.only(top:5.0),
-      height: ScreenUtil().setHeight(320),
+      height: ScreenUtil().setHeight(330),
       padding: EdgeInsets.all(3.0),
       child: GridView.count(
         crossAxisCount: 5,
@@ -141,6 +163,165 @@ class Adv extends StatelessWidget {
     );
   }
 }
+
+
+//首页店长电话数据
+class LeaderPhone extends StatelessWidget {
+
+  final String leaderImage;
+  final String leaderPhone;
+  LeaderPhone({Key key,this.leaderImage, this.leaderPhone}):super(key:key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: InkWell(
+        child: Image.network(leaderImage),
+        onTap: _CallPhone,
+      ),
+    );
+  }
+
+  //打电话
+  void _CallPhone()async{
+    String phone = 'tel:'+leaderPhone;
+    if(await canLaunch(phone)){
+      await launch(phone);
+    }else{
+      throw '对不起，因为某些原因电话打不通...';
+    }
+  }
+
+}
+
+
+//首页商品推荐数据
+class Recommend extends StatelessWidget {
+
+  final List recommendList;
+  Recommend({Key key,this.recommendList}):super(key:key);
+
+  //商品推荐标题
+  Widget _recommendTitle(){
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 5.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(width: 0.5,color: Colors.black12)
+        )
+      ),
+      child: Text(
+        '商品推荐',
+        style: TextStyle(color: Colors.pink),
+      ),
+    );
+  }
+
+  //商品推荐内容
+  Widget _recommendList(){
+    return Container(
+      height: ScreenUtil().setHeight(325),
+      child: ListView.builder(
+        itemCount: recommendList.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context,index){
+          return _recommendContent(index);
+        }
+      ),
+    );
+  }
+
+  //商品推荐内容item
+  Widget _recommendContent(index){
+    return InkWell(
+      onTap: (){},
+      child: Container(
+        height: ScreenUtil().setHeight(320),
+        width: ScreenUtil().setWidth(250),
+        padding: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              width: 0.5,
+              color: Colors.black12
+            ),
+            bottom: BorderSide(
+              width: 0.5,
+              color: Colors.black12
+            )
+          )
+        ),
+        child: Column(
+          children: <Widget>[
+            Image.network(recommendList[index]['image']),
+            Text('¥${recommendList[index]['mallPrice']}'),
+            Text(
+              '¥${recommendList[index]['price']}',
+              style: TextStyle(decoration: TextDecoration.lineThrough,color: Colors.grey,fontSize: 12.0),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10.0),
+      height: ScreenUtil().setHeight(400),
+      child: Column(
+        children: <Widget>[
+          _recommendTitle(),//商品推荐标题
+          _recommendList(),//商品推荐内容
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

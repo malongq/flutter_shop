@@ -34,7 +34,8 @@ class _IndexPageState extends State<IndexPage> {
 
   int currentIndex = 0;
   var currentPage;
-  final List tabPage = [
+//  final List tabPage = [  改造保持页面状态如下
+  final List<Widget> tabPage = [
     HomePage(),
     CategoryPage(),
     CartPage(),
@@ -55,7 +56,11 @@ class _IndexPageState extends State<IndexPage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
       body: Center(
-        child: currentPage,
+//        child: currentPage, 改造保持页面状态如下
+        child: IndexedStack(
+          index:currentIndex,
+          children: tabPage,
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white70,
