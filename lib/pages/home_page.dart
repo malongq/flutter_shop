@@ -41,6 +41,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
             String leaderImage = data['data']['shopInfo']['leaderImage'];          // 获取店长图片数据
             String leaderPhone = data['data']['shopInfo']['leaderPhone'];          // 获取店长电话数据
             List<Map> recommendList = (data['data']['recommend'] as List).cast();  // 获取商品推荐数据
+            String floorTitle1 = data['data']['floor1Pic']['PICTURE_ADDRESS'];      // 获取楼层标题数据1
+            String floorTitle2 = data['data']['floor2Pic']['PICTURE_ADDRESS'];      // 获取楼层标题数据1
+            String floorTitle3 = data['data']['floor3Pic']['PICTURE_ADDRESS'];      // 获取楼层标题数据1
+            List<Map> floor1 = (data['data']['floor1'] as List).cast();             // 获取楼层内容数据1
+            List<Map> floor2 = (data['data']['floor2'] as List).cast();             // 获取楼层内容数据1
+            List<Map> floor3 = (data['data']['floor3'] as List).cast();             // 获取楼层内容数据1
 
             return SingleChildScrollView(
               child: Column(
@@ -50,6 +56,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
                   Adv(adv: adbPicture),                      //广告位组件
                   LeaderPhone(leaderImage:leaderImage,leaderPhone:leaderPhone),//店长电话组件
                   Recommend(recommendList:recommendList),    //商品推荐组件
+                  FloorTitle(floor_title: floorTitle1),      //楼层标题数据1
+                  FloorContent(floorContent: floor1),        //楼层内容数据1
+                  FloorTitle(floor_title: floorTitle2),      //楼层标题数据2
+                  FloorContent(floorContent: floor2),        //楼层内容数据2
+                  FloorTitle(floor_title: floorTitle3),      //楼层标题数据3
+                  FloorContent(floorContent: floor3),        //楼层内容数据3
                 ],
               ),
             );
@@ -280,6 +292,82 @@ class Recommend extends StatelessWidget {
       ),
     );
   }
+}
+
+
+//首页楼层标题数据
+class FloorTitle extends StatelessWidget {
+  final String floor_title;
+  FloorTitle({Key key,this.floor_title}):super(key : key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Image.network(floor_title),
+      padding: EdgeInsets.all(8.0),
+    );
+  }
+}
+
+
+//首页楼层内容数据
+class FloorContent extends StatelessWidget {
+
+  final List floorContent;
+  FloorContent({Key key,this.floorContent}):super(key:key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          _rowContent(),
+          _cloumContent(),
+        ],
+      ),
+    );
+  }
+
+  //楼层内容最小单元，使用 InkWell 包一层方便点击跳转
+  Widget _itemContent(Map item){
+    return Container(
+      width: ScreenUtil().setWidth(375),
+      child: InkWell(
+        onTap: (){print('点击了');},
+        child: Image.network(item['image']),
+      ),
+    );
+  }
+
+  //楼层左边一张大图，右边两张小图位置
+  Widget _rowContent(){
+    return Container(
+      child: Row(
+        children: <Widget>[
+          _itemContent(floorContent[0]),
+          Column(
+            children: <Widget>[
+              _itemContent(floorContent[1]),
+              _itemContent(floorContent[2]),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  //楼层左右均分图片位置
+  Widget _cloumContent(){
+    return Container(
+      child: Row(
+        children: <Widget>[
+          _itemContent(floorContent[3]),
+          _itemContent(floorContent[4]),
+        ],
+      ),
+    );
+  }
+
 }
 
 
