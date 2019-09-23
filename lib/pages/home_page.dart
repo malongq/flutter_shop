@@ -27,20 +27,24 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
 
   @override
   Widget build(BuildContext context) {
+
+    var params = {'lon':'115.02932','lat':'35.76189'};
+
     return Scaffold(
       appBar: AppBar(title: Text('首页'),),
       body:FutureBuilder(
-        future: getHomePageData(),
+        //future: getHomePageData(),//    这是之前没抽取请求类的写法，下面一行是抽取后的写法
+        future: getData('homePageUrl', params),
         builder: (context,snapshot){
           if(snapshot.hasData){
             print('数据请求进来了----------------------');
             var data = json.decode(snapshot.data.toString());
-            List<Map> swiperDataList = (data['data']['slides'] as List).cast();    // 获取顶部轮播组件数据
-            List<Map> navigatorList = (data['data']['category'] as List).cast();   // 获取顶部导航组件数据
-            String adbPicture = data['data']['advertesPicture']['PICTURE_ADDRESS'];// 获取广告位数据
-            String leaderImage = data['data']['shopInfo']['leaderImage'];          // 获取店长图片数据
-            String leaderPhone = data['data']['shopInfo']['leaderPhone'];          // 获取店长电话数据
-            List<Map> recommendList = (data['data']['recommend'] as List).cast();  // 获取商品推荐数据
+            List<Map> swiperDataList = (data['data']['slides'] as List).cast();     // 获取顶部轮播组件数据
+            List<Map> navigatorList = (data['data']['category'] as List).cast();    // 获取顶部导航组件数据
+            String adbPicture = data['data']['advertesPicture']['PICTURE_ADDRESS']; // 获取广告位数据
+            String leaderImage = data['data']['shopInfo']['leaderImage'];           // 获取店长图片数据
+            String leaderPhone = data['data']['shopInfo']['leaderPhone'];           // 获取店长电话数据
+            List<Map> recommendList = (data['data']['recommend'] as List).cast();   // 获取商品推荐数据
             String floorTitle1 = data['data']['floor1Pic']['PICTURE_ADDRESS'];      // 获取楼层标题数据1
             String floorTitle2 = data['data']['floor2Pic']['PICTURE_ADDRESS'];      // 获取楼层标题数据1
             String floorTitle3 = data['data']['floor3Pic']['PICTURE_ADDRESS'];      // 获取楼层标题数据1
@@ -62,6 +66,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
                   FloorContent(floorContent: floor2),        //楼层内容数据2
                   FloorTitle(floor_title: floorTitle3),      //楼层标题数据3
                   FloorContent(floorContent: floor3),        //楼层内容数据3
+                  HotLocation(),                             //火爆专区内容数据
                 ],
               ),
             );
@@ -371,6 +376,33 @@ class FloorContent extends StatelessWidget {
 }
 
 
+//首页火爆专区内容数据
+class HotLocation extends StatefulWidget {
+  @override
+  _HotLocationState createState() => _HotLocationState();
+}
+
+class _HotLocationState extends State<HotLocation> {
+
+  @override
+  void initState() {
+    super.initState();
+//    getHomeHotData().then((val){
+//      print(val);
+//    });
+    int page = 1;
+    getData('homeHotLocationUrl', page).then((val){
+      print(val);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text('马龙'),
+    );
+  }
+}
 
 
 
