@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_shop/config/service_url.dart';
 
 //获取首页内容
-Future getData(url,params) async{
+Future getData(url,{params}) async{
 
   try{
     print('开始请求数据...');
