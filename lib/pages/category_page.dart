@@ -3,7 +3,10 @@ import 'package:flutter_shop/service/service_request_manger.dart';
 import 'dart:convert';
 import '../model/category_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
+import 'package:flutter_shop/provide/child_category.dart';
 
+//TODO 分类
 class CategoryPage extends StatefulWidget {
 
   @override
@@ -20,14 +23,16 @@ class _State extends State<CategoryPage> {
         child: Row(
           children: <Widget>[
             CategoryLeft(),
-            CategoryLeft()
+            Column(
+              children: <Widget>[
+                CategoryRight(),
+              ],
+            )
           ],
         ),
       ),
     );
   }
-
-
 
 }
 
@@ -41,6 +46,7 @@ class CategoryLeft extends StatefulWidget {
 class _CategoryLeftState extends State<CategoryLeft> {
 
   List list = [];
+  var listIndex = 0;
 
   //网络请求分类页面数据
   void _getCategory() async{
@@ -52,6 +58,7 @@ class _CategoryLeftState extends State<CategoryLeft> {
       });
       print("分类页面数据：   "+data.toString());
       //category_data.data[0].bxMallSubDto.forEach((item)=>print(item.mallSubName));
+      Provide.value<ChildCategoryProvide>(context).getChildCategory(list[0].bxMallSubDto);
     });
   }
 
@@ -81,22 +88,82 @@ class _CategoryLeftState extends State<CategoryLeft> {
   }
 
   Widget _InkWellLeft(int index){
+
+    bool isChecked = false;
+    isChecked = (index == listIndex) ? true : false;
+
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        setState(() {
+          listIndex = index;
+        });
+        var childList = list[index].bxMallSubDto;
+        Provide.value<ChildCategoryProvide>(context).getChildCategory(childList);
+      },
       child: Container(
         height: ScreenUtil().setHeight(100),
         padding: EdgeInsets.only(left: 10,top: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isChecked ? Colors.white70 : Colors.white,
           border: Border(
             bottom: BorderSide(width: 1,color: Colors.black12),
           ),
         ),
-        child: Text(list[index].mallCategoryName,style: TextStyle(fontSize: 17,color: Colors.black),),
+        child: Text(list[index].mallCategoryName,style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.black),),
       )
     );
   }
 
 }
+
+
+//分类页面右侧导航
+class CategoryRight extends StatefulWidget {
+  @override
+  _CategoryRightState createState() => _CategoryRightState();
+}
+
+class _CategoryRightState extends State<CategoryRight> {
+  
+//  List list = ['名酒','宝丰','北京二锅头','三贤醉','4贤醉','5贤醉','6贤醉','7贤醉','8贤醉','9贤醉','0贤醉'];
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: ScreenUtil().setHeight(100),
+      width: ScreenUtil().setWidth(600),
+      decoration: BoxDecoration(
+        color: Colors.white,border: Border(bottom: BorderSide(width: 1,color: Colors.black12))
+      ),
+      child: Provide<ChildCategoryProvide>(
+        builder: (context,child,childCategory){
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: childCategory.childBxMallSubDto.length,
+            itemBuilder: (context,index){
+              return _rightInkwell(childCategory.childBxMallSubDto[index]);
+            }
+          );
+        }
+      ),
+    );
+  }
+  
+  Widget _rightInkwell(BxMallSubDto item){
+    return InkWell(
+      onTap: (){},
+      child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+        child: Text(
+          item.mallSubName,
+          style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.black),
+        ),
+      ),
+    );
+  }
+  
+}
+
 
 
