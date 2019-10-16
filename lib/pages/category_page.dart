@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shop/service/service_request_manger.dart';
 import 'dart:convert';
 import '../model/category_model.dart';
+import '../model/catrgory_list_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
 import 'package:flutter_shop/provide/child_category.dart';
 
 //TODO 分类
 class CategoryPage extends StatefulWidget {
-
   @override
   _State createState() => _State();
 }
@@ -26,6 +26,7 @@ class _State extends State<CategoryPage> {
             Column(
               children: <Widget>[
                 CategoryRight(),
+                CategoryRightList(),
               ],
             )
           ],
@@ -36,9 +37,8 @@ class _State extends State<CategoryPage> {
 
 }
 
-//分类页面左侧导航
+//TODO 分类页面左侧导航
 class CategoryLeft extends StatefulWidget {
-
   @override
   _CategoryLeftState createState() => _CategoryLeftState();
 }
@@ -117,7 +117,7 @@ class _CategoryLeftState extends State<CategoryLeft> {
 }
 
 
-//分类页面右侧导航
+//TODO 分类页面右侧导航
 class CategoryRight extends StatefulWidget {
   @override
   _CategoryRightState createState() => _CategoryRightState();
@@ -164,6 +164,122 @@ class _CategoryRightState extends State<CategoryRight> {
   }
   
 }
+
+
+//TODO 分类页面右侧商品列表
+class CategoryRightList extends StatefulWidget {
+  @override
+  _CategoryRightListState createState() => _CategoryRightListState();
+}
+
+class _CategoryRightListState extends State<CategoryRightList> {
+
+  List list = [];
+
+  @override
+  void initState() {
+    _getCategoryRightList();
+    super.initState();
+  }
+
+  void _getCategoryRightList()async{
+    var dataParams = {
+      'categoryId' : '4',
+      'CategorySubId' : "",
+      'page' : 1,
+    };
+    await getData('getMallGoods',params: dataParams).then((val){
+      var dataList = json.decode(val.toString());
+      print("分类页面列表数据：   "+dataList.toString());
+      CategoryListModel categoryListModel = CategoryListModel.fromJson(dataList);
+      setState(() {
+        list = categoryListModel.data;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: ScreenUtil().setWidth(600),
+      height: ScreenUtil().setHeight(980),
+      child: ListView.builder(
+        itemCount: list.length,
+        itemBuilder:(context,index){
+          return _ListItem(index);
+        }
+      ),
+    );
+  }
+
+  //图片组件
+  Widget _image(index){
+    return Container(
+      width: ScreenUtil().setWidth(200),
+      child: Image.network(list[index].image),
+    );
+  }
+
+  //名称组件
+  Widget _title(index){
+    return Container(
+      padding: EdgeInsets.all(5),
+      width: ScreenUtil().setWidth(400),
+      child: Text(
+        list[index].goodsName,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.black),
+      ),
+    );
+  }
+
+  //价钱组件
+  Widget _price(index){
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      width: ScreenUtil().setWidth(400),
+      child: Row(
+        children: <Widget>[
+          Text('价格： ¥${list[index].presentPrice}  ',style: TextStyle(color: Colors.pink,fontSize: ScreenUtil().setSp(30))),
+          Text('¥${list[index].oriPrice}',style: TextStyle(color: Colors.black26,decoration: TextDecoration.lineThrough),)
+        ],
+      ),
+    );
+  }
+
+  //组合 图片+名称+价钱 三个组件
+  Widget _ListItem(index){
+    return InkWell(
+      onTap: (){},
+      child: Container(
+        padding: EdgeInsets.only(top: 5,bottom: 5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            bottom: BorderSide(color: Colors.black12,width: 1)
+          )
+        ),
+        child: Row(
+          children: <Widget>[
+            _image(index),
+            Column(
+              children: <Widget>[
+                _title(index),
+                _price(index),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+}
+
+
+
+
 
 
 
