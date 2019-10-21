@@ -6,6 +6,7 @@ import '../model/catrgory_list_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
 import 'package:flutter_shop/provide/child_category.dart';
+import 'package:flutter_shop/provide/child_category_right_list.dart';
 
 //TODO 分类
 class CategoryPage extends StatefulWidget {
@@ -62,9 +63,30 @@ class _CategoryLeftState extends State<CategoryLeft> {
     });
   }
 
+
+
+  void _getCategoryRightList({String catrgoryId})async{
+    var dataParams = {
+      'categoryId' : catrgoryId == null ? '4' : catrgoryId,
+      'CategorySubId' : "",
+      'page' : 1,
+    };
+    await getData('getMallGoods',params: dataParams).then((val){
+      var dataList = json.decode(val.toString());
+      print("分类页面列表数据：   "+dataList.toString());
+      CategoryListModel categoryListModel = CategoryListModel.fromJson(dataList);
+//      setState(() {
+//        list = categoryListModel.data;
+//      });
+      Provide.value<ChildCategoryRightListProvide>(context).getChildCategoryRightList(categoryListModel.data);
+    });
+  }
+
+
   @override
   void initState() {
     _getCategory();
+    _getCategoryRightList();
     super.initState();
   }
 
@@ -98,7 +120,9 @@ class _CategoryLeftState extends State<CategoryLeft> {
           listIndex = index;
         });
         var childList = list[index].bxMallSubDto;
+        var categoryId = list[index].mallCategoryId;
         Provide.value<ChildCategoryProvide>(context).getChildCategory(childList);
+        _getCategoryRightList(catrgoryId: categoryId);
       },
       child: Container(
         height: ScreenUtil().setHeight(100),
@@ -174,59 +198,63 @@ class CategoryRightList extends StatefulWidget {
 
 class _CategoryRightListState extends State<CategoryRightList> {
 
-  List list = [];
+//  List list = [];
 
   @override
   void initState() {
-    _getCategoryRightList();
+//    _getCategoryRightList();
     super.initState();
   }
 
-  void _getCategoryRightList()async{
-    var dataParams = {
-      'categoryId' : '4',
-      'CategorySubId' : "",
-      'page' : 1,
-    };
-    await getData('getMallGoods',params: dataParams).then((val){
-      var dataList = json.decode(val.toString());
-      print("分类页面列表数据：   "+dataList.toString());
-      CategoryListModel categoryListModel = CategoryListModel.fromJson(dataList);
-      setState(() {
-        list = categoryListModel.data;
-      });
-    });
-  }
+//  void _getCategoryRightList()async{
+//    var dataParams = {
+//      'categoryId' : '4',
+//      'CategorySubId' : "",
+//      'page' : 1,
+//    };
+//    await getData('getMallGoods',params: dataParams).then((val){
+//      var dataList = json.decode(val.toString());
+//      print("分类页面列表数据：   "+dataList.toString());
+//      CategoryListModel categoryListModel = CategoryListModel.fromJson(dataList);
+//      setState(() {
+//        list = categoryListModel.data;
+//      });
+//    });
+//  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: ScreenUtil().setWidth(600),
-      height: ScreenUtil().setHeight(980),
-      child: ListView.builder(
-        itemCount: list.length,
-        itemBuilder:(context,index){
-          return _ListItem(index);
+    return Provide<ChildCategoryRightListProvide>(
+        builder: (context,child,data){
+          return Container(
+            width: ScreenUtil().setWidth(600),
+            height: ScreenUtil().setHeight(980),
+            child: ListView.builder(
+                itemCount: data.childList.length,
+                itemBuilder:(context,index){
+                  return _ListItem(data.childList,index);
+                }
+            ),
+          );
         }
-      ),
     );
   }
 
   //图片组件
-  Widget _image(index){
+  Widget _image(List newList, index){
     return Container(
       width: ScreenUtil().setWidth(200),
-      child: Image.network(list[index].image),
+      child: Image.network(newList[index].image),
     );
   }
 
   //名称组件
-  Widget _title(index){
+  Widget _title(List newList, index){
     return Container(
       padding: EdgeInsets.all(5),
       width: ScreenUtil().setWidth(400),
       child: Text(
-        list[index].goodsName,
+        newList[index].goodsName,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.black),
@@ -235,21 +263,21 @@ class _CategoryRightListState extends State<CategoryRightList> {
   }
 
   //价钱组件
-  Widget _price(index){
+  Widget _price(List newList, index){
     return Container(
       margin: EdgeInsets.only(top: 20),
       width: ScreenUtil().setWidth(400),
       child: Row(
         children: <Widget>[
-          Text('价格： ¥${list[index].presentPrice}  ',style: TextStyle(color: Colors.pink,fontSize: ScreenUtil().setSp(30))),
-          Text('¥${list[index].oriPrice}',style: TextStyle(color: Colors.black26,decoration: TextDecoration.lineThrough),)
+          Text('价格： ¥${newList[index].presentPrice}  ',style: TextStyle(color: Colors.pink,fontSize: ScreenUtil().setSp(30))),
+          Text('¥${newList[index].oriPrice}',style: TextStyle(color: Colors.black26,decoration: TextDecoration.lineThrough),)
         ],
       ),
     );
   }
 
   //组合 图片+名称+价钱 三个组件
-  Widget _ListItem(index){
+  Widget _ListItem(List newList, index){
     return InkWell(
       onTap: (){},
       child: Container(
@@ -262,11 +290,11 @@ class _CategoryRightListState extends State<CategoryRightList> {
         ),
         child: Row(
           children: <Widget>[
-            _image(index),
+            _image(newList,index),
             Column(
               children: <Widget>[
-                _title(index),
-                _price(index),
+                _title(newList,index),
+                _price(newList,index),
               ],
             )
           ],
