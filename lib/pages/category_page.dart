@@ -59,7 +59,7 @@ class _CategoryLeftState extends State<CategoryLeft> {
       });
       print("分类页面数据：   "+data.toString());
       //category_data.data[0].bxMallSubDto.forEach((item)=>print(item.mallSubName));
-      Provide.value<ChildCategoryProvide>(context).getChildCategory(list[0].bxMallSubDto);
+      Provide.value<ChildCategoryProvide>(context).getChildCategory(list[0].bxMallSubDto,list[0].mallCategoryId);
     });
   }
 
@@ -68,12 +68,12 @@ class _CategoryLeftState extends State<CategoryLeft> {
   void _getCategoryRightList({String catrgoryId})async{
     var dataParams = {
       'categoryId' : catrgoryId == null ? '4' : catrgoryId,
-      'CategorySubId' : "",
+      'categorySubId' : "",
       'page' : 1,
     };
     await getData('getMallGoods',params: dataParams).then((val){
       var dataList = json.decode(val.toString());
-      print("分类页面列表数据：   "+dataList.toString());
+      print("dataParams左侧：   "+dataParams.toString());
       CategoryListModel categoryListModel = CategoryListModel.fromJson(dataList);
 //      setState(() {
 //        list = categoryListModel.data;
@@ -121,7 +121,7 @@ class _CategoryLeftState extends State<CategoryLeft> {
         });
         var childList = list[index].bxMallSubDto;
         var categoryId = list[index].mallCategoryId;
-        Provide.value<ChildCategoryProvide>(context).getChildCategory(childList);
+        Provide.value<ChildCategoryProvide>(context).getChildCategory(childList,categoryId);
         _getCategoryRightList(catrgoryId: categoryId);
       },
       child: Container(
@@ -165,7 +165,7 @@ class _CategoryRightState extends State<CategoryRight> {
             scrollDirection: Axis.horizontal,
             itemCount: childCategory.childBxMallSubDto.length,
             itemBuilder: (context,index){
-              return _rightInkwell(childCategory.childBxMallSubDto[index]);
+              return _rightInkwell(index, childCategory.childBxMallSubDto[index]);
             }
           );
         }
@@ -173,18 +173,43 @@ class _CategoryRightState extends State<CategoryRight> {
     );
   }
   
-  Widget _rightInkwell(BxMallSubDto item){
+  Widget _rightInkwell(int index, BxMallSubDto item){
+
+    bool isClick = false;
+    isClick = (index==Provide.value<ChildCategoryProvide>(context).childIndex) ? true : false;
+
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        Provide.value<ChildCategoryProvide>(context).getChildRight(index,item.mallCategoryId);
+        _getCategoryRightList2(item.mallSubId);
+      },
       child: Container(
         alignment: Alignment.center,
         padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
         child: Text(
           item.mallSubName,
-          style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.black),
+          style: TextStyle(fontSize: ScreenUtil().setSp(30),color: isClick ? Colors.pink : Colors.black),
         ),
       ),
     );
+  }
+
+  void _getCategoryRightList2(String categorySubId)async{
+    var dataParams = {
+      'categoryId' : Provide.value<ChildCategoryProvide>(context).catrgoryId,
+      'categorySubId' : categorySubId,
+      'page' : 1,
+    };
+    await getData('getMallGoods',params: dataParams).then((val){
+      print("dataParams：   "+dataParams.toString());
+      var dataList = json.decode(val.toString());
+      CategoryListModel categoryListModel = CategoryListModel.fromJson(dataList);
+      if(categoryListModel.data == null){
+        Provide.value<ChildCategoryRightListProvide>(context).getChildCategoryRightList([]);
+      }else{
+        Provide.value<ChildCategoryRightListProvide>(context).getChildCategoryRightList(categoryListModel.data);
+      }
+    });
   }
   
 }
@@ -226,16 +251,21 @@ class _CategoryRightListState extends State<CategoryRightList> {
   Widget build(BuildContext context) {
     return Provide<ChildCategoryRightListProvide>(
         builder: (context,child,data){
-          return Container(
-            width: ScreenUtil().setWidth(600),
-            height: ScreenUtil().setHeight(980),
-            child: ListView.builder(
-                itemCount: data.childList.length,
-                itemBuilder:(context,index){
-                  return _ListItem(data.childList,index);
-                }
-            ),
-          );
+          if(data.childList.length > 0){
+            return Expanded(
+                child: Container(
+                  width: ScreenUtil().setWidth(600),
+                  child: ListView.builder(
+                      itemCount: data.childList.length,
+                      itemBuilder:(context,index){
+                        return _ListItem(data.childList,index);
+                      }
+                  ),
+                )
+            );
+          }else{
+            return Text('暂无数据...');
+          }
         }
     );
   }
