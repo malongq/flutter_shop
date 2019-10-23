@@ -343,6 +343,7 @@ class _CategoryRightListState extends State<CategoryRightList> {
     return InkWell(
       onTap: (){},
       child: Container(
+        height: ScreenUtil().setHeight(200),
         padding: EdgeInsets.only(top: 5,bottom: 5),
         decoration: BoxDecoration(
           color: Colors.white,
