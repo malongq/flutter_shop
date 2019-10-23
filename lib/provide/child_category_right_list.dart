@@ -10,4 +10,9 @@ class ChildCategoryRightListProvide with ChangeNotifier{
     notifyListeners();
   }
 
+  getChildCategoryRightList2(List<CategoryListModelData> list){
+    childList.addAll(list);
+    notifyListeners();
+  }
+
 }
