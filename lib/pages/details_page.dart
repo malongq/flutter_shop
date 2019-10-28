@@ -23,7 +23,7 @@ class DetailsPage extends StatelessWidget {
             return Container(
               child: Column(
                 children: <Widget>[
-                  Text('马龙。。。'),
+                  Text(cId),
                   Text('马龙。。。'),
                   Text('马龙。。。'),
                   Text('马龙。。。'),

@@ -28,13 +28,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   bool get wantKeepAlive => true;
 
   @override
-  void initState() {
-    super.initState();
-//    _getHotGoods();//火爆专区请求网络数据
-    print('重新加载页面');
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     var params = {'lon':'115.02932','lat':'35.76189'};
@@ -46,8 +39,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
         future: getData('homePageUrl', params: params),
         builder: (context,snapshot){
           if(snapshot.hasData){
-            print('数据请求进来了----------------------');
             var data = json.decode(snapshot.data.toString());
+            print('首页请求数据成功: 马龙=========>'+data.toString());
             List<Map> swiperDataList = (data['data']['slides'] as List).cast();     // 获取顶部轮播组件数据
             List<Map> navigatorList = (data['data']['category'] as List).cast();    // 获取顶部导航组件数据
             String adbPicture = data['data']['advertesPicture']['PICTURE_ADDRESS']; // 获取广告位数据
@@ -104,7 +97,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
               },
             );
           }else{
-            print('暂时还没有进来----------------------');
+//            print('暂时还没有进来----------------------');
             return Center(child: Text('加载中 . . .'));
           }
         },
@@ -204,7 +197,13 @@ class Banner extends StatelessWidget {
       child: Swiper(
         itemCount: swiperDataList.length,
         itemBuilder: (BuildContext context,int index){
-          return Image.network("${swiperDataList[index]['image']}",fit:BoxFit.fill);
+          return InkWell(
+              onTap: (){
+                print('点击了轮播位');
+                Application.router.navigateTo(context, "${Routess.detailsPage}?id=${swiperDataList[index]['goodsId']}");
+              },
+              child: Image.network("${swiperDataList[index]['image']}",fit:BoxFit.fill),
+            );
         },
         autoplay: true,
         pagination: SwiperPagination(),
@@ -225,8 +224,8 @@ class Navigator extends StatelessWidget {
   Widget _navigatorListUi(BuildContext context,item){
     return InkWell(
       onTap: (){
-        print('点击进入');
-//        _goCategoryDetail(context,index,item['mallCategoryId']);
+        print('点击了导航位');
+        Application.router.navigateTo(context, "${Routess.detailsPage}?id=${item['goodsId']}");
       },
       child: Column(
         children: <Widget>[
@@ -236,12 +235,6 @@ class Navigator extends StatelessWidget {
       )
     );
   }
-
-//  void _goCategoryDetail(context,int index,String categroyId) async{
-//    await request('getCategory').then((val){
-//      var data = json.decode(val.toString());
-//    });
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +269,14 @@ class Adv extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Image.network(adv),
+      //Image.network(adv)
+      child: InkWell(
+        onTap: (){
+          print('点击了广告位');
+          Application.router.navigateTo(context, "${Routess.detailsPage}?id=${'35df1fdd5d8c468ca525cd7021bd32d8'}");
+        },
+        child: Image.network(adv),
+      ),
     );
   }
 }
@@ -344,16 +344,19 @@ class Recommend extends StatelessWidget {
         itemCount: recommendList.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context,index){
-          return _recommendContent(index);
+          return _recommendContent(context,index);
         }
       ),
     );
   }
 
   //商品推荐内容item
-  Widget _recommendContent(index){
+  Widget _recommendContent(context,index){
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        print('点击了商品推荐位');
+        Application.router.navigateTo(context, "${Routess.detailsPage}?id=${recommendList[index]['goodsId']}");
+      },
       child: Container(
         height: ScreenUtil().setHeight(320),
         width: ScreenUtil().setWidth(250),
@@ -426,34 +429,36 @@ class FloorContent extends StatelessWidget {
     return Container(
       child: Column(
         children: <Widget>[
-          _rowContent(),
-          _cloumContent(),
+          _rowContent(context),
+          _cloumContent(context),
         ],
       ),
     );
   }
 
   //楼层内容最小单元，使用 InkWell 包一层方便点击跳转
-  Widget _itemContent(Map item){
+  Widget _itemContent(context,Map item){
     return Container(
       width: ScreenUtil().setWidth(375),
       child: InkWell(
-        onTap: (){print('点击了');},
+        onTap: (){
+          Application.router.navigateTo(context, "${Routess.detailsPage}?id=${item['goodsId']}");
+        },
         child: Image.network(item['image']),
       ),
     );
   }
 
   //楼层左边一张大图，右边两张小图位置
-  Widget _rowContent(){
+  Widget _rowContent(context){
     return Container(
       child: Row(
         children: <Widget>[
-          _itemContent(floorContent[0]),
+          _itemContent(context,floorContent[0]),
           Column(
             children: <Widget>[
-              _itemContent(floorContent[1]),
-              _itemContent(floorContent[2]),
+              _itemContent(context,floorContent[1]),
+              _itemContent(context,floorContent[2]),
             ],
           )
         ],
@@ -462,12 +467,12 @@ class FloorContent extends StatelessWidget {
   }
 
   //楼层左右均分图片位置
-  Widget _cloumContent(){
+  Widget _cloumContent(context){
     return Container(
       child: Row(
         children: <Widget>[
-          _itemContent(floorContent[3]),
-          _itemContent(floorContent[4]),
+          _itemContent(context,floorContent[3]),
+          _itemContent(context,floorContent[4]),
         ],
       ),
     );

@@ -59,7 +59,7 @@ class _CategoryLeftState extends State<CategoryLeft> {
       setState(() {
         list = category_data.data;
       });
-      print("分类页面数据：   "+data.toString());
+      print("分类页面数据请求成功： "+data.toString());
       //category_data.data[0].bxMallSubDto.forEach((item)=>print(item.mallSubName));
       Provide.value<ChildCategoryProvide>(context).getChildCategory(list[0].bxMallSubDto,list[0].mallCategoryId);
     });
@@ -263,7 +263,7 @@ class _CategoryRightListState extends State<CategoryRightList> {
               scrollController.jumpTo(0.0);
             }
           }catch(e){
-            print('进入页面第一次报错');
+//            print('进入页面第一次报错');
           }
           if(data.childList.length > 0){
             return Expanded(

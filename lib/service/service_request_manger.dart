@@ -7,7 +7,6 @@ import 'package:flutter_shop/config/service_url.dart';
 Future getData(url,{params}) async{
 
   try{
-    print('开始请求数据...');
     Response response;
     Dio dio = new Dio();
     dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded");
@@ -19,7 +18,7 @@ Future getData(url,{params}) async{
     }
 
     if(response.statusCode == 200){
-      print('请求数据成功: 马龙=========>'+response.data);
+//      print('请求数据成功: 马龙=========>'+response.data);
       return response.data;
     }else{
       throw Exception('请求服务端出错！！！');
