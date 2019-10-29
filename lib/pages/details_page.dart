@@ -3,6 +3,7 @@ import 'package:provide/provide.dart';
 import '../provide/detail_info_provide.dart';
 import '../pages/details_page/details_top.dart';
 import '../pages/details_page/details_explan.dart';
+import '../pages/details_page/details_tabbar.dart';
 
 //todo 首页商品火爆专区详情页面
 class DetailsPage extends StatelessWidget {
@@ -27,6 +28,7 @@ class DetailsPage extends StatelessWidget {
                 children: <Widget>[
                  DetailsTop(),
                  DetailsExplan(),
+                 DratilsTabbar(),
                 ],
               ),
             );
