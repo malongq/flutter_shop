@@ -10,9 +10,9 @@ class DetailsInfoProvide with ChangeNotifier{
   bool isRight = false;
 
   //获取商品详情信息
-  getDetailInfo(String id){
+  getDetailInfo(String id) async{
     var params = {'goodId' : id};
-    getData('getGoodDetailById',params: params).then((val){
+    await getData('getGoodDetailById',params: params).then((val){
       var responseData = json.decode(val.toString());
       print(responseData);
       detailsModel = DetailsModel.fromJson(responseData);

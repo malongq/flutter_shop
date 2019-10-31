@@ -9,8 +9,8 @@ class DetailsExplan extends StatelessWidget {
     return Container(
       color: Colors.white,
       width: ScreenUtil().setWidth(750),
-      margin: EdgeInsets.only(left:15,top: 10),
-      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.fromLTRB(15.0,8.0,8.0,8.0,),
       child:Text(
         '说明： >  急速送达  >  正品保证',
         style: TextStyle(fontSize: ScreenUtil().setSp(35),color: Colors.red),

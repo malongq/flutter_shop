@@ -4,6 +4,8 @@ import '../provide/detail_info_provide.dart';
 import '../pages/details_page/details_top.dart';
 import '../pages/details_page/details_explan.dart';
 import '../pages/details_page/details_tabbar.dart';
+import '../pages/details_page/details_web.dart';
+import '../pages/details_page/details_bottom.dart';
 
 //todo 首页商品火爆专区详情页面
 class DetailsPage extends StatelessWidget {
@@ -23,14 +25,27 @@ class DetailsPage extends StatelessWidget {
         future: _getData(context),
         builder: (context,snapshot){
           if(snapshot.hasData){
-            return Container(
-              child: ListView(
-                children: <Widget>[
-                 DetailsTop(),
-                 DetailsExplan(),
-                 DratilsTabbar(),
-                ],
-              ),
+            return Stack(
+              children: <Widget>[
+
+                Container(
+                  child: ListView(
+                    children: <Widget>[
+                      DetailsTop(),
+                      DetailsExplan(),
+                      DratilsTabbar(),
+                      DetailsWeb()
+                    ],
+                  ),
+                ),
+
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: DetailsBottom()
+                )
+
+              ],
             );
           }else{
             return Text('加载中。。。');
