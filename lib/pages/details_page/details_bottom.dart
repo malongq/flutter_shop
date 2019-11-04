@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
+import 'package:flutter_shop/provide/cart.dart';
+import 'package:flutter_shop/provide/detail_info_provide.dart';
 
 //todo 商品详情底部区域
 class DetailsBottom extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+
+    var info = Provide.value<DetailsInfoProvide>(context).detailsModel.data.goodInfo;
+    var goodsId = info.goodsId;
+    var goodsName = info.goodsName;
+    var count = 1;
+    var price = info.presentPrice;
+    var images = info.image1;
+
     return Container(
       width: ScreenUtil().setWidth(750),
       color: Colors.white,
@@ -20,7 +32,9 @@ class DetailsBottom extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: (){},
+            onTap: ()async{
+              await Provide.value<CartProvide>(context).save(goodsId, goodsName, count, price, images);
+            },
             child: Container(
               alignment: Alignment.center,
               width: ScreenUtil().setWidth(320),
@@ -30,7 +44,9 @@ class DetailsBottom extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: (){},
+            onTap: ()async{
+              await Provide.value<CartProvide>(context).remove();
+            },
             child: Container(
               alignment: Alignment.center,
               width: ScreenUtil().setWidth(320),
