@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provide/provide.dart';
 import '../provide/cart.dart';
+import '../pages/cart_page/cart_item.dart';
 
 //todo 购物车页面
 class CartPage extends StatelessWidget {
@@ -16,10 +17,7 @@ class CartPage extends StatelessWidget {
             return ListView.builder(
               itemCount: infoList.length,
               itemBuilder: (context,index){
-                return ListTile(
-                  title: Text('名称：  ${infoList[index].goodsName}'),
-                  subtitle: Text('数量：${infoList[index].count}'),
-                );
+                return CartItem(infoList[index]);
               },
             );
           }else{
