@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provide/provide.dart';
 import '../provide/cart.dart';
 import '../pages/cart_page/cart_item.dart';
+import '../pages/cart_page/cart_bottom.dart';
 
 //todo 购物车页面
 class CartPage extends StatelessWidget {
@@ -14,11 +15,20 @@ class CartPage extends StatelessWidget {
         builder: (context,snapshot){
           if(snapshot.hasData){
             List infoList = Provide.value<CartProvide>(context).cartInfo;
-            return ListView.builder(
-              itemCount: infoList.length,
-              itemBuilder: (context,index){
-                return CartItem(infoList[index]);
-              },
+            return Stack(
+              children: <Widget>[
+                ListView.builder(
+                  itemCount: infoList.length,
+                  itemBuilder: (context,index){
+                    return CartItem(infoList[index]);
+                  }
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child:CartBottom()
+                ),
+              ],
             );
           }else{
             return Text('暂无数据');
