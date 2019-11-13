@@ -7,6 +7,8 @@ import 'package:flutter_shop/model/cart_info.dart';
 class CartProvide with ChangeNotifier{
   String cartString  = '[]';
   List<CartInfoModel> cartInfo = [];
+  double allPrice = 0.0;
+  int allCount = 0;
 
   save (goodsId,goodsName,count,price,images)async{
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -57,15 +59,40 @@ class CartProvide with ChangeNotifier{
     SharedPreferences sp = await SharedPreferences.getInstance();
     cartString = sp.getString('cart_info');
     cartInfo = [];
+
     if(cartString == null){
       cartInfo = [];
     }else{
       List<Map> tempList = (json.decode(cartString.toString())as List).cast();
+      allPrice = 0.0;
+      allCount = 0;
       tempList.forEach((item){
+        if(item['isCheck']){
+          allPrice += (item['count'] * item['price']);
+          allCount += item['count'];
+        }
         cartInfo.add(CartInfoModel.fromJson(item));
       });
     }
     notifyListeners();
+  }
+
+  removeInfo(String goodId)async{
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    cartString = sp.getString('cart_info');
+    List<Map> list = (json.decode(cartString.toString())as List).cast();
+    int tempIndex = 0;
+    int delIndex = 0;
+    list.forEach((item){
+      if(item['goodsId'] == goodId){
+        delIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+    list.removeAt(delIndex);
+    cartString = json.encode(list).toString();
+    sp.setString('cart_info', cartString);
+    await getCartInfo();
   }
 
 }

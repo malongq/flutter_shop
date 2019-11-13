@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provide/provide.dart';
+import '../../provide/cart.dart';
 
 // todo 购物车底部UI
 class CartBottom extends StatelessWidget {
@@ -10,16 +12,16 @@ class CartBottom extends StatelessWidget {
       color: Colors.white,
       child: Row(
         children: <Widget>[
-          _selectAll(),
-          _allPriceArea(),
-          _goBuy()
+          _selectAll(context),
+          _allPriceArea(context),
+          _goBuy(context)
         ],
       ),
     );
   }
 
   //全选
-  Widget _selectAll(){
+  Widget _selectAll(context){
     return Container(
       child: Row(
         children: <Widget>[
@@ -35,24 +37,29 @@ class CartBottom extends StatelessWidget {
   }
 
   //合计文案
-  Widget _allPriceArea(){
+  Widget _allPriceArea(context){
     return Container(
       margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: ScreenUtil().setWidth(280),
-                alignment: Alignment.centerRight,
-                child: Text('合计：',style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
-              ),
-              Container(
-                width: ScreenUtil().setWidth(150),
-                alignment: Alignment.centerLeft,
-                child: Text('¥  1992',style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.red),),
-              ),
-            ],
+          Provide<CartProvide>(
+            builder: (context,child,val){
+              var allPrice = Provide.value<CartProvide>(context).allPrice;
+              return Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(280),
+                    alignment: Alignment.centerRight,
+                    child: Text('合计：',style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
+                  ),
+                  Container(
+                    width: ScreenUtil().setWidth(150),
+                    alignment: Alignment.centerLeft,
+                    child: Text('¥  ${allPrice}',style: TextStyle(fontSize: ScreenUtil().setSp(30),color: Colors.red),),
+                  ),
+                ],
+              );
+            },
           ),
           Container(
             width: ScreenUtil().setWidth(430),
@@ -65,19 +72,24 @@ class CartBottom extends StatelessWidget {
   }
 
   //结算
-  Widget _goBuy(){
+  Widget _goBuy(context){
     return Container(
       margin: EdgeInsets.only(left: 5),
       child: InkWell(
         onTap: (){},
-        child: Container(
-          padding: EdgeInsets.all(5),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Text('结算(8)',style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
+        child: Provide<CartProvide>(
+          builder: (context,child,val){
+            var allCount = Provide.value<CartProvide>(context).allCount;
+            return Container(
+              padding: EdgeInsets.all(5),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text('结算(${allCount})',style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
+            );
+          }
         ),
       ),
     );

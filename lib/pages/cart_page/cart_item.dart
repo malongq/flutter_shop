@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_shop/model/cart_info.dart';
 import 'package:flutter_shop/pages/cart_page/cart_count.dart';
+import 'package:provide/provide.dart';
+import '../../provide/cart.dart';
 
 //todo 购物车页面条目模块
 class CartItem extends StatelessWidget {
@@ -25,7 +27,7 @@ class CartItem extends StatelessWidget {
           _checkBox(context,item),
           _image(item),
           _title(item),
-          _price(item)
+          _price(item,context)
         ],
       ),
     );
@@ -65,7 +67,7 @@ class CartItem extends StatelessWidget {
     );
   }
 
-  Widget _price(item){
+  Widget _price(item,context){
     return Container(
       width: ScreenUtil().setWidth(150),
       alignment: Alignment.centerRight,
@@ -74,8 +76,10 @@ class CartItem extends StatelessWidget {
           Text('¥${item.price}'),
           Container(
             child: InkWell(
-              onTap: (){},
-              child: Icon(Icons.delete,color: Colors.black26,),
+              onTap: (){
+                Provide.value<CartProvide>(context).removeInfo(item.goodsId);
+              },
+              child: Icon(Icons.delete_forever,color: Colors.black26,),
             ),
           )
         ],
