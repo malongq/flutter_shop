@@ -36,7 +36,14 @@ class CartItem extends StatelessWidget {
   //复选框
   Widget _checkBox(context,item){
     return Container(
-      child: Checkbox(value: item.isCheck, onChanged: (bool val){}, activeColor: Colors.red,),
+      child: Checkbox(
+        value: item.isCheck,
+        onChanged: (bool val){
+          item.isCheck = val;
+          Provide.value<CartProvide>(context).checkGoods(item);
+        },
+        activeColor: Colors.red,
+      ),
     );
   }
 

@@ -10,25 +10,32 @@ class CartBottom extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(3),
       color: Colors.white,
-      child: Row(
-        children: <Widget>[
-          _selectAll(context),
-          _allPriceArea(context),
-          _goBuy(context)
-        ],
-      ),
+      child: Provide<CartProvide>(
+          builder: (context,child,val){
+            return Row(
+              children: <Widget>[
+                _selectAll(context),
+                _allPriceArea(context),
+                _goBuy(context)
+              ],
+            );
+          }
+      )
     );
   }
 
   //全选
   Widget _selectAll(context){
+    bool isAllCheck = Provide.value<CartProvide>(context).isAllCheck;
     return Container(
       child: Row(
         children: <Widget>[
           Checkbox(
-            value: true,
+            value: isAllCheck,
             activeColor: Colors.pink,
-            onChanged: (bool val){},
+            onChanged: (bool val){
+              Provide.value<CartProvide>(context).allCheck(val);
+            },
           ),
           Text('全选'),
         ],
@@ -38,13 +45,13 @@ class CartBottom extends StatelessWidget {
 
   //合计文案
   Widget _allPriceArea(context){
+    var allPrice = Provide.value<CartProvide>(context).allPrice;
     return Container(
       margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Column(
         children: <Widget>[
           Provide<CartProvide>(
             builder: (context,child,val){
-              var allPrice = Provide.value<CartProvide>(context).allPrice;
               return Row(
                 children: <Widget>[
                   Container(
@@ -73,13 +80,13 @@ class CartBottom extends StatelessWidget {
 
   //结算
   Widget _goBuy(context){
+    var allCount = Provide.value<CartProvide>(context).allCount;
     return Container(
       margin: EdgeInsets.only(left: 5),
       child: InkWell(
         onTap: (){},
         child: Provide<CartProvide>(
           builder: (context,child,val){
-            var allCount = Provide.value<CartProvide>(context).allCount;
             return Container(
               padding: EdgeInsets.all(5),
               alignment: Alignment.center,
