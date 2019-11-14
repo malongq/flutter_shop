@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../provide/cart.dart';
+import 'package:provide/provide.dart';
+import 'package:flutter_shop/model/cart_info.dart';
 
 //TODO 购物车页面自定义加减布局
 class CartCount extends StatelessWidget {
+
+  final CartInfoModel item;
+  CartCount(this.item);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,25 +21,27 @@ class CartCount extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          _reduceBtn(),
-          _centerShow(),
-          _addBtn()
+          _reduceBtn(context),
+          _centerShow(context),
+          _addBtn(context)
         ],
       ),
     );
   }
 
   //减少按钮
-  Widget _reduceBtn(){
+  Widget _reduceBtn(context){
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        Provide.value<CartProvide>(context).addOrReduce(item, 'reduce');
+      },
       child: Container(
         width: ScreenUtil().setWidth(45),
         height: ScreenUtil().setHeight(45),
         alignment: Alignment.center,
         child: Text('-'),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: item.count>1?Colors.white:Colors.grey,
           border: Border(
             right: BorderSide(
               width: 1,color: Colors.black12
@@ -44,20 +53,22 @@ class CartCount extends StatelessWidget {
   }
 
   //中间展示数量
-  Widget _centerShow(){
+  Widget _centerShow(context){
     return Container(
         width: ScreenUtil().setWidth(70),
         height: ScreenUtil().setHeight(45),
         alignment: Alignment.center,
         color: Colors.white,
-        child: Text('66'),
+        child: Text('${item.count}'),
     );
   }
 
   //增加按钮
-  Widget _addBtn(){
+  Widget _addBtn(context){
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        Provide.value<CartProvide>(context).addOrReduce(item, 'add');
+      },
       child: Container(
         width: ScreenUtil().setWidth(45),
         height: ScreenUtil().setHeight(45),

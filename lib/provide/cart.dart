@@ -153,4 +153,29 @@ class CartProvide with ChangeNotifier{
     await getCartInfo();
   }
 
+
+  //购物车自定义加减逻辑
+  addOrReduce(CartInfoModel cartInfoModel, String addOrReduce)async{
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    cartString = sp.getString('cart_info');
+    List<Map> list = (json.decode(cartString.toString())as List).cast();
+    int tempIndex = 0;
+    int changIndex = 0;
+    list.forEach((item){
+      if(item['goodsId'] == cartInfoModel.goodsId){
+        changIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+    if(addOrReduce == 'add'){
+      cartInfoModel.count++;
+    }else if(cartInfoModel.count > 1){
+      cartInfoModel.count--;
+    }
+    list[changIndex] = cartInfoModel.toJson();
+    cartString = json.encode(list).toString();
+    sp.setString('cart_info', cartString);
+    await getCartInfo();
+  }
+
 }
