@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
 import 'package:flutter_shop/provide/cart.dart';
 import 'package:flutter_shop/provide/detail_info_provide.dart';
+import '../../provide/current_index.dart';
 
 //todo 商品详情底部区域
 class DetailsBottom extends StatelessWidget {
@@ -23,13 +24,38 @@ class DetailsBottom extends StatelessWidget {
       height: ScreenUtil().setHeight(80),
       child: Row(
         children: <Widget>[
-          InkWell(
-            onTap: (){},
-            child: Container(
-              width: ScreenUtil().setWidth(110),
-              alignment: Alignment.center,
-              child: Icon(Icons.shopping_cart,size:35,color: Colors.red,),
-            ),
+          Stack(
+            children: <Widget>[
+              InkWell(
+                onTap: (){
+                  Provide.value<CurrentIndexProvide>(context).gotoWhere(2);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: ScreenUtil().setWidth(110),
+                  alignment: Alignment.center,
+                  child: Icon(Icons.shopping_cart,size:35,color: Colors.red,),
+                ),
+              ),
+              Provide<CartProvide>(
+                builder: (context,child,val){
+                  int count = Provide.value<CartProvide>(context).allCount;
+                  return Positioned(
+                    top: 0,
+                    right: 5,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(6, 3, 6, 3),
+                      decoration: BoxDecoration(
+                        color: Colors.pink,
+                        border: Border.all(width: 1,color: Colors.white),
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Text('${count}',style: TextStyle(fontSize: ScreenUtil().setSp(20),color: Colors.white),),
+                    )
+                  );
+                },
+              ),
+            ],
           ),
           InkWell(
             onTap: ()async{

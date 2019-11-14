@@ -19,18 +19,18 @@ class CartProvide with ChangeNotifier{
     List<Map> tempList = (temp as List).cast();
     bool isHave = false;
     int i = 0;
-//    allPrice = 0;
-//    allCount = 0;
+    allPrice = 0;
+    allCount = 0;
     tempList.forEach((item){
       if(item['goodsId']==goodsId){
         tempList[i]['count'] = item['count'] + 1;
         cartInfo[i].count++;
         isHave = true;
       }
-//      if(item['isCheck']){
-//        allPrice += (cartInfo[i].price * cartInfo[i].count);
-//        allCount += cartInfo[i].count;
-//      }
+      if(item['isCheck']){
+        allPrice += (cartInfo[i].price * cartInfo[i].count);
+        allCount += cartInfo[i].count;
+      }
       i++;
     });
 
@@ -45,8 +45,8 @@ class CartProvide with ChangeNotifier{
       };
       tempList.add(newGoods);
       cartInfo.add(CartInfoModel.fromJson(newGoods));
-//      allPrice += (count * price);
-//      allCount + count;
+      allPrice += (count * price);
+      allCount += count;
     }
 
     cartString = json.encode(tempList).toString();
@@ -63,8 +63,8 @@ class CartProvide with ChangeNotifier{
     SharedPreferences sp = await SharedPreferences.getInstance();
     sp.remove('cart_info');
     cartInfo = [];
-//    allPrice = 0;
-//    allCount = 0;
+    allPrice = 0;
+    allCount = 0;
     print('清空完成。。。。。。。。。。。');
     notifyListeners();
   }

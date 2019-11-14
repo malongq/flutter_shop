@@ -9,6 +9,7 @@ import 'routers/routers.dart';
 import 'routers/application.dart';
 import 'package:flutter_shop/provide/detail_info_provide.dart';
 import 'package:flutter_shop/provide/cart.dart';
+import 'package:flutter_shop/provide/current_index.dart';
 
 void main(){
   var counter = Counter();
@@ -16,13 +17,15 @@ void main(){
   var childCategoryRightListProvide = ChildCategoryRightListProvide();
   var detailsInfoProvide = DetailsInfoProvide();
   var cartProvide = CartProvide();
+  var currentIndexProvide = CurrentIndexProvide();
   var provides = Providers();
   provides
   ..provide(Provider<Counter>.value(counter))
   ..provide(Provider<ChildCategoryProvide>.value(childCategoryProvide))
   ..provide(Provider<ChildCategoryRightListProvide>.value(childCategoryRightListProvide))
   ..provide(Provider<DetailsInfoProvide>.value(detailsInfoProvide))
-  ..provide(Provider<CartProvide>.value(cartProvide));
+  ..provide(Provider<CartProvide>.value(cartProvide))
+  ..provide(Provider<CurrentIndexProvide>.value(currentIndexProvide));
   runApp(ProviderNode(child: ShopApp(), providers: provides));
 }
 
