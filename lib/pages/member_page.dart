@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provide/provide.dart';
 import 'package:flutter_shop/provide/counter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../routers/application.dart';
+import '../routers/routers.dart';
 
 //todo 我的页面
 class MemberPage extends StatelessWidget {
@@ -13,7 +15,7 @@ class MemberPage extends StatelessWidget {
       body: Container(
         child: ListView(
           children: <Widget>[
-            _topHeader(),
+            _topHeader(context),
             _orderTitle(),
             _orderType(),
             _actionList()
@@ -24,7 +26,7 @@ class MemberPage extends StatelessWidget {
   }
 
   //头像区域
-  Widget _topHeader(){
+  Widget _topHeader(BuildContext context){
     return Container(
       width: ScreenUtil().setWidth(750),
       padding: EdgeInsets.all(20),
@@ -35,9 +37,14 @@ class MemberPage extends StatelessWidget {
             width: 200,
             height: 200,
             margin: EdgeInsets.only(top: 20),
-            child: ClipOval(
-              child: Image.network('http://img.hao661.com/qq.hao661.com/uploads/allimg/c160128/1453c259451560-121426.jpg'),
-            ),
+            child: InkWell(
+              onTap: (){
+                Application.router.navigateTo(context, "${Routess.mapPage}");
+              },
+              child: ClipOval(
+                child: Image.network('http://img.hao661.com/qq.hao661.com/uploads/allimg/c160128/1453c259451560-121426.jpg'),
+              ),
+            )
           ),
           Container(
             margin: EdgeInsets.only(top: 10),

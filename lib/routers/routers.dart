@@ -6,6 +6,7 @@ class Routess{
 
   static String root = '/';
   static String detailsPage = '/detail';
+  static String mapPage = '/map';
 
   static void configreRoutes(Router router){
 
@@ -16,7 +17,7 @@ class Routess{
     );
 
     router.define(detailsPage, handler: detailsHandler);
-
+    router.define(mapPage, handler: mapHandler);
   }
 
 }
